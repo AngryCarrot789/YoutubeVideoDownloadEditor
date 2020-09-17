@@ -1,0 +1,150 @@
+﻿<UserControl x:Class="YoutubeVideoDownloadEditor.Controls.Sliders.RangeSlider"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YoutubeVideoDownloadEditor.Controls.Sliders"
+             mc:Ignorable="d" 
+             d:DesignHeight="32" d:DesignWidth="400"
+             x:Name="root">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="LeftSlider" TargetType="{x:Type Slider}">
+            <Border SnapsToDevicePixels="true"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Rectangle x:Name="PART_SelectionRange"/>
+                    <Track x:Name="PART_Track" Grid.Row="1">
+                        <Track.Thumb>
+                            <Thumb x:Name="Thumb">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Grid Cursor="SizeWE" Background="Transparent">
+                                            <Border x:Name="grip"
+                                                    BorderBrush="{DynamicResource ControlBrightDefaultBorderBrush}"
+                                                    BorderThickness="4 4 0 4" 
+                                                    Height="30"
+                                                    Width="11" 
+                                                    CornerRadius="1 0 0 1"/>
+                                            <Rectangle HorizontalAlignment="Center" Width="3" Margin="4">
+                                                <Rectangle.Fill>
+                                                    <DrawingBrush TileMode="Tile" Viewbox="0,0,4,4" Viewport="0,0,4,4" ViewportUnits="Absolute" ViewboxUnits="Absolute">
+                                                        <DrawingBrush.Drawing>
+                                                            <DrawingGroup>
+                                                                <GeometryDrawing Brush="{DynamicResource ControlBrightDefaultBackground}" Geometry="M 1 1 L 1 3 L 3 3 L 3 1 z"/>
+                                                                <GeometryDrawing Brush="{DynamicResource ControlBrightDefaultBorderBrush}" Geometry="M 0 0 L 0 2 L 2 2 L 2 0 z"/>
+                                                            </DrawingGroup>
+                                                        </DrawingBrush.Drawing>
+                                                    </DrawingBrush>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="grip" Value="{StaticResource ControlMouseOverBorderBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsDragging" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="grip" Value="{StaticResource ControlSelectedBorderBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="false">
+                                                <Setter Property="BorderBrush" TargetName="grip" Value="{StaticResource ControlDisabledBorderBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Track.Thumb>
+                    </Track>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="RightSlider" TargetType="{x:Type Slider}">
+            <Border SnapsToDevicePixels="true"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Rectangle x:Name="PART_SelectionRange"/>
+                    <Track x:Name="PART_Track" Grid.Row="1">
+                        <Track.Thumb>
+                            <Thumb x:Name="Thumb">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Grid Cursor="SizeWE" Background="Transparent">
+                                            <Border x:Name="grip" 
+                                                    BorderBrush="{DynamicResource ControlBrightDefaultBorderBrush}"
+                                                    BorderThickness="0 4 4 4" 
+                                                    Width="11" 
+                                                    Height="30"
+                                                    CornerRadius="0 1 1 0"/>
+                                            <Rectangle HorizontalAlignment="Center" Width="3" Margin="4">
+                                                <Rectangle.Fill>
+                                                    <DrawingBrush TileMode="Tile" Viewbox="0,0,4,4" Viewport="0,0,4,4" ViewportUnits="Absolute" ViewboxUnits="Absolute">
+                                                        <DrawingBrush.Drawing>
+                                                            <DrawingGroup>
+                                                                <GeometryDrawing Brush="{DynamicResource ControlBrightDefaultBackground}" Geometry="M 1 1 L 1 3 L 3 3 L 3 1 z"/>
+                                                                <GeometryDrawing Brush="{DynamicResource ControlBrightDefaultBorderBrush}" Geometry="M 0 0 L 0 2 L 2 2 L 2 0 z"/>
+                                                            </DrawingGroup>
+                                                        </DrawingBrush.Drawing>
+                                                    </DrawingBrush>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="grip" Value="{StaticResource ControlMouseOverBorderBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsDragging" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="grip" Value="{StaticResource ControlSelectedBorderBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="false">
+                                                <Setter Property="BorderBrush" TargetName="grip" Value="{StaticResource ControlDisabledBorderBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Track.Thumb>
+                    </Track>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <Grid VerticalAlignment="Center">
+        <Border BorderThickness="2"
+                BorderBrush="{DynamicResource ControlDefaultBackground}"
+                VerticalAlignment="Center"
+                Height="4"
+                Margin="5,0,5,0"/>
+
+        <Slider x:Name="LowerSlider"
+                Minimum="{Binding ElementName=root, Path=Minimum}"
+                Maximum="{Binding ElementName=root, Path=Maximum}"
+                Value="{Binding ElementName=root, Path=LowerValue}"
+                Template="{StaticResource LeftSlider}"
+                ValueChanged="LowerSlider_ValueChanged"
+                Margin="0,0,10,0"
+                LargeChange="1" 
+                SmallChange="0.1" 
+                TickFrequency="0.1"/>
+        <Slider x:Name="UpperSlider"
+                Minimum="{Binding ElementName=root, Path=Minimum}"
+                Maximum="{Binding ElementName=root, Path=Maximum}"
+                Value="{Binding ElementName=root, Path=UpperValue}"
+                Template="{DynamicResource RightSlider}"
+                ValueChanged="UpperSlider_ValueChanged"
+                Margin="10,0,0,0"
+                LargeChange="1" 
+                SmallChange="0.1" 
+                TickFrequency="0.1"/>
+    </Grid>
+</UserControl>

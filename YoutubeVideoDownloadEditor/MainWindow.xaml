@@ -1,0 +1,117 @@
+﻿<Window x:Class="YoutubeVideoDownloadEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:YoutubeVideoDownloadEditor" 
+        xmlns:sliders="clr-namespace:YoutubeVideoDownloadEditor.Controls.Sliders"
+        xmlns:Converters="clr-namespace:YoutubeVideoDownloadEditor.Converters"
+        mc:Ignorable="d"
+        Title="Youtube Video Downloader and Editor" 
+        Height="650" Width="550"
+        MinWidth="550" MinHeight="625"
+        Style="{DynamicResource CustomWindowStyle}">
+    <Window.Resources>
+        <Converters:IsPlayingToStringConverter x:Key="IsPlayingToStringConverter"/>
+        <Converters:SecondsToTimeConverter x:Key="SecondsToTimeConverter"/>
+    </Window.Resources>
+    <Grid Margin="5">
+        <GroupBox Header="Preferences" Height="125" VerticalAlignment="Top">
+            <Grid>
+                <Label Content="Download URL" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <TextBox Text="{Binding VideoPreferences.URLPath, UpdateSourceTrigger=PropertyChanged}" Margin="93,0,67,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextWrapping="NoWrap"/>
+                <Button Command="{Binding VideoPreferences.DownloadVideoCommand, Mode=OneTime}" Content="Download" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="64"/>
+                <Grid IsEnabled="{Binding VideoPreferences.FileDownloaded, UpdateSourceTrigger=PropertyChanged}" Margin="0,29,0,0">
+                    <Label Content="Output Path" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <TextBox Text="{Binding VideoPreferences.OutputPath, UpdateSourceTrigger=PropertyChanged}" Margin="93,0,29,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextWrapping="NoWrap"/>
+                    <Button Command="{Binding VideoPreferences.BrowseOutputFileCommand, Mode=OneTime}" Content="..." Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="26"/>
+                    <CheckBox IsChecked="{Binding VideoPreferences.ExportAudioOnly, UpdateSourceTrigger=PropertyChanged}" Content="Export Audio Only" Height="Auto" HorizontalAlignment="Left" Width="125" Margin="0,29,0,0"/>
+                    <ProgressBar IsIndeterminate="{Binding VideoPreferences.IsDownloadingOrExporting, UpdateSourceTrigger=PropertyChanged}" Margin="130,29,63,0"/>
+                    <Button Command="{Binding ExportVideoCommand, Mode=OneTime}" Content="Export" HorizontalAlignment="Right" Width="60" Margin="0,29,0,0"/>
+                </Grid>
+            </Grid>
+        </GroupBox>
+        <!-- IsEnabled="{Binding VideoPreferences.FileDownloaded, UpdateSourceTrigger=PropertyChanged}" -->
+        <GroupBox Header="Editor" Margin="0,130,0,0">
+            <Grid>
+                <MediaElement x:Name="Player" 
+                              HorizontalAlignment="Stretch" 
+                              VerticalAlignment="Stretch"
+                              Margin="0,0,0,143"
+                              LoadedBehavior="Manual"
+                              UnloadedBehavior="Manual"
+                              MediaOpened="Player_MediaOpened"
+                              MediaEnded="Player_MediaEnded"
+                              Volume="1"/>
+                <Grid Height="120" VerticalAlignment="Bottom">
+                    <Border VerticalAlignment="Top" 
+                            PreviewMouseDown="Slider_MouseDown" 
+                            PreviewMouseUp="Slider_MouseUp"
+                            Background="Transparent">
+                        <Slider Value="{Binding Player.PlayerPosition, UpdateSourceTrigger=PropertyChanged}" 
+                            Minimum="{Binding Player.PlayerSliderMinimum, UpdateSourceTrigger=PropertyChanged}" 
+                            Maximum="{Binding Player.PlayerSliderMaximum, UpdateSourceTrigger=PropertyChanged}" 
+                            ValueChanged="Slider_ValueChanged" 
+                                LargeChange="1" 
+                                SmallChange="0.1" 
+                                TickFrequency="0.1"/>
+                    </Border>
+                    <sliders:RangeSlider LowerValue="{Binding RangeLower, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                         UpperValue="{Binding RangeUpper, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                         Minimum="{Binding RangeSliderMinimum, UpdateSourceTrigger=PropertyChanged}"
+                                         Maximum="{Binding RangeSliderMaximum, UpdateSourceTrigger=PropertyChanged}" 
+                                         Margin="0,25,0,65"/>
+                    <Grid Height="23" VerticalAlignment="Bottom" Margin="0,0,0,40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Player Position:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,4,0,3"/>
+                        <TextBlock Text="{Binding Player.PlayerPosition, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource SecondsToTimeConverter}, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} secs}" VerticalAlignment="Center" Margin="85,4,4,3"/>
+                        <TextBlock Text="Video Lendth:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,4,0,3" Grid.Column="1"/>
+                        <TextBlock Text="{Binding Player.PlayerDuration, Converter={StaticResource SecondsToTimeConverter}, StringFormat=\{0:hh\} hrs \{0:mm\} mins \{0:ss\} secs, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="78,4,3,3" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Height="20" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Start:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2"/>
+                            <TextBlock Text="{Binding RangeLower, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource SecondsToTimeConverter}, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} secs}" VerticalAlignment="Center" Margin="32,2,2,2"/>
+                            <TextBlock Text="End:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2" Grid.Column="1"/>
+                            <TextBlock Text="{Binding RangeUpper, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource SecondsToTimeConverter}, StringFormat={}{0:hh} hrs {0:mm} mins {0:ss} secs}" VerticalAlignment="Center" Margin="28,2,0,2" Grid.Column="1"/>
+                        </Grid>
+                    </Grid>
+                    <Grid Height="20" VerticalAlignment="Bottom">
+                        <Grid DataContext="{Binding Player, Mode=OneTime}" HorizontalAlignment="Left" Width="140">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding AutoPlayPauseCommand, Mode=OneTime}" Content="{Binding IsPlaying, Converter={StaticResource IsPlayingToStringConverter}}"/>
+                            <Button Command="{Binding StopCommand, Mode=OneTime}" Content="Stop" Grid.Column="2"/>
+                        </Grid>
+                        <Separator Style="{DynamicResource VerticalSeparator}" Margin="145,0,0,0" HorizontalAlignment="Left"/>
+                        <Grid Margin="152,0,0,0" HorizontalAlignment="Left" Width="45">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="4*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding SetRangeLowerToPositionCommand, Mode=OneTime}" Margin="0,0,0,0" ToolTip="Move Lower Range to Player Position">
+                                <TextBlock Text="{}{" Margin="0 -2 0 0"/>
+                            </Button>
+                            <Button Command="{Binding SetRangeUpperToPositionCommand, Mode=OneTime}" ToolTip="Move Upper Range to Player Position" Grid.Column="2">
+                                <TextBlock Text="{}}" Margin="0 -2 0 0"/>
+                            </Button>
+                        </Grid>
+                        <CheckBox IsChecked="{Binding ElementName=Player, Path=IsMuted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Content="Is Muted" HorizontalAlignment="Right" Width="75" Margin="0,0,116,0"/>
+                        <Slider Value="{Binding ElementName=Player, Path=Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="1" HorizontalAlignment="Right" Width="111" TickFrequency="0.01" SmallChange="0.01" LargeChange="0.1"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
