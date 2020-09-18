@@ -28,13 +28,6 @@ namespace YoutubeVideoDownloadEditor.ViewModels
             set => RaisePropertyChanged(ref _outputPath, value);
         }
 
-        private bool _exportAudioOnly;
-        public bool ExportAudioOnly
-        {
-            get => _exportAudioOnly;
-            set => RaisePropertyChanged(ref _exportAudioOnly, value);
-        }
-
         private bool _isDownloadingOrExporting;
         public bool IsDownloadingOrExporting
         {
@@ -73,52 +66,64 @@ namespace YoutubeVideoDownloadEditor.ViewModels
 
         public void DownloadVideo()
         {
-            Task.Run(() =>
+            foreach (string file in Directory.GetFiles(OUTPUT_DIR))
             {
-                foreach(string file in Directory.GetFiles(OUTPUT_DIR))
+                try
                 {
-                    try
-                    {
-                        File.Delete(file);
-                    }
-                    catch { }
+                    File.Delete(file);
                 }
+                catch { }
+            }
 
-                IsDownloadingOrExporting = true;
-                string url = URLPath;
-                string youtubedlPath = Path.GetFullPath(@"..\..\apps\youtube-dl.exe");
-                ProcessStartInfo processInfo = new ProcessStartInfo(youtubedlPath, $"{url} --output {OUTPUT_DIR + @"\"}TEMPFILE");
-                processInfo.CreateNoWindow = true;
-                processInfo.UseShellExecute = false;
-                processInfo.RedirectStandardError = true;
-                processInfo.RedirectStandardOutput = true;
-
-                Process process = Process.Start(processInfo);
-                process.OutputDataReceived += Process_OutputDataReceived;
-                process.BeginOutputReadLine();
-                process.WaitForExit();
-                process.Close();
-                IsDownloadingOrExporting = false;
-
-                Application.Current.Dispatcher.Invoke(() =>
+            if (File.Exists(URLPath))
+            {
+                File.Copy(URLPath, Path.Combine(OUTPUT_DIR, "TEMPFILE" + Path.GetExtension(URLPath)));
+                DownloadedFilePath = URLPath;
+                FileDownloaded = true;
+                LoadVideo?.Invoke(DownloadedFilePath);
+            }
+            else
+            {
+                Task.Run(() =>
                 {
-                    foreach (string file in Directory.GetFiles(OUTPUT_DIR))
-                    {
-                        if (file.Contains("TEMPFILE"))
-                        {
-                            DownloadedFilePath = file;
-                            FileDownloaded = true;
-                        }
-                    }
+                    YTConsole.WriteLine($"Downloading '{URLPath}'");
 
-                    LoadVideo?.Invoke(DownloadedFilePath);
+                    IsDownloadingOrExporting = true;
+                    string url = URLPath;
+                    string youtubedlPath = Path.GetFullPath(@"..\..\apps\youtube-dl.exe");
+                    ProcessStartInfo processInfo = new ProcessStartInfo(youtubedlPath, $"{url} --output {OUTPUT_DIR + @"\"}TEMPFILE");
+                    processInfo.CreateNoWindow = true;
+                    processInfo.UseShellExecute = false;
+                    processInfo.RedirectStandardError = true;
+                    processInfo.RedirectStandardOutput = true;
+
+                    Process process = Process.Start(processInfo);
+                    process.OutputDataReceived += Process_OutputDataReceived;
+                    process.BeginOutputReadLine();
+                    process.WaitForExit();
+                    process.Close();
+                    IsDownloadingOrExporting = false;
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        foreach (string file in Directory.GetFiles(OUTPUT_DIR))
+                        {
+                            if (file.Contains("TEMPFILE"))
+                            {
+                                DownloadedFilePath = file;
+                                FileDownloaded = true;
+                            }
+                        }
+
+                        LoadVideo?.Invoke(DownloadedFilePath);
+                    });
                 });
-            });
+            }
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Debug.WriteLine(e.Data);
+            YTConsole.WriteLine(e.Data);
         }
 
         public void BrowseOutputPath()
@@ -126,8 +131,9 @@ namespace YoutubeVideoDownloadEditor.ViewModels
             if (File.Exists(DownloadedFilePath))
             {
                 VistaSaveFileDialog sfd = new VistaSaveFileDialog();
-                sfd.FileName = Path.GetFileName(DownloadedFilePath);
                 sfd.Title = "Select a location to save the exported file";
+                sfd.Filter = "All files (*.*)|*.*";
+                sfd.FileName = Path.GetFileName(DownloadedFilePath);
 
                 if (sfd.ShowDialog() == true)
                 {

@@ -78,6 +78,7 @@
     <Compile Include="Utilities\BaseViewModel.cs" />
     <Compile Include="Utilities\Command.cs" />
     <Compile Include="Utilities\CommandParam.cs" />
+    <Compile Include="Utilities\YTConsole.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MediaPlayerViewModel.cs" />
     <Compile Include="ViewModels\VideoPreferencesViewModel.cs" />

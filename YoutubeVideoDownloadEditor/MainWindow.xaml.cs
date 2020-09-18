@@ -101,5 +101,10 @@ namespace YoutubeVideoDownloadEditor
         {
             ViewModel.VideoUnloaded();
         }
+
+        private void console_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ((TextBox)sender).ScrollToEnd();
+        }
     }
 }

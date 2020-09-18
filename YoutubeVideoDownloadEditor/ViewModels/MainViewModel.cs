@@ -46,6 +46,13 @@ namespace YoutubeVideoDownloadEditor.ViewModels
             set => RaisePropertyChanged(ref _rangeUpper, value);
         }
 
+        private string _consoleText;
+        public string ConsoleText
+        {
+            get => _consoleText;
+            set => RaisePropertyChanged(ref _consoleText, value);
+        }
+
         public ICommand SetRangeLowerToPositionCommand { get; }
         public ICommand SetRangeUpperToPositionCommand { get; }
         public ICommand ExportVideoCommand { get; }
@@ -64,7 +71,14 @@ namespace YoutubeVideoDownloadEditor.ViewModels
             SetRangeUpperToPositionCommand = new Command(SetRangeUpperToPosition);
             ExportVideoCommand = new Command(ExportVideo);
 
+            YTConsole.MessageReceived += YTConsole_MessageReceived;
+
             //Player.LoadVideo(@"C:\Users\kettl\Desktop\animalbeep.mp4");
+        }
+
+        private void YTConsole_MessageReceived(string message)
+        {
+            ConsoleText += message;
         }
 
         private void LoadVideo(string path)
@@ -76,9 +90,7 @@ namespace YoutubeVideoDownloadEditor.ViewModels
         {
             if (File.Exists(VideoPreferences.DownloadedFilePath))
             {
-                string fileName = Path.GetFileName(VideoPreferences.DownloadedFilePath);
-                string outputFileName = Path.GetFileName(VideoPreferences.OutputPath);
-                if (File.Exists(Path.Combine(Path.GetPathRoot(outputFileName), fileName)))
+                if (File.Exists(VideoPreferences.OutputPath))
                 {
                     MessageBox.Show("File already exists. chose another location.");
                 }
@@ -104,6 +116,7 @@ namespace YoutubeVideoDownloadEditor.ViewModels
                             Process process = Process.Start(processInfo);
                             process.OutputDataReceived += Process_OutputDataReceived;
                             process.BeginOutputReadLine();
+                            process.ErrorDataReceived += Process_OutputDataReceived;
                             process.BeginErrorReadLine();
                             process.WaitForExit();
                             process.Close();
@@ -116,7 +129,7 @@ namespace YoutubeVideoDownloadEditor.ViewModels
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Debug.WriteLine(e.Data);
+            YTConsole.WriteLine(e.Data);
         }
 
         public void VideoLoaded()
