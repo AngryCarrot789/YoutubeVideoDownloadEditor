@@ -100,13 +100,20 @@ namespace YoutubeVideoDownloadEditor.ViewModels
                     {
                         VideoPreferences.IsDownloadingOrExporting = true;
                         string url = VideoPreferences.URLPath;
-                        string ffmpegPath = Path.GetFullPath(@"..\..\apps\ffmpeg.exe");
+                        string ffmpegPath = Path.GetFullPath(@"ffmpeg.exe");
                         if (RangeLower >= 0 && (RangeUpper >= 0 && RangeUpper > RangeLower))
                         {
                             string startTimeStr = TimeSpan.FromSeconds(RangeLower).ToString(@"hh\:mm\:ss\.ffff");
                             double endTime = RangeUpper - RangeLower;
                             string endTimeStr = TimeSpan.FromSeconds(endTime).ToString(@"hh\:mm\:ss\.ffff");
-                            ProcessStartInfo processInfo = new ProcessStartInfo(ffmpegPath, $"-ss {startTimeStr} -t {endTimeStr} -i {VideoPreferences.DownloadedFilePath} {VideoPreferences.OutputPath}");
+                            string args;
+
+                            if (VideoPreferences.Bitrate != 0)
+                                args = $"-ss {startTimeStr} -t {endTimeStr} -i \"{VideoPreferences.DownloadedFilePath}\" -b:v {VideoPreferences.Bitrate} \"{VideoPreferences.OutputPath}\"";
+                            else
+                                args = $"-ss {startTimeStr} -t {endTimeStr} -i \"{VideoPreferences.DownloadedFilePath}\" \"{VideoPreferences.OutputPath}\"";
+
+                            ProcessStartInfo processInfo = new ProcessStartInfo(ffmpegPath, args);
 
                             processInfo.CreateNoWindow = true;
                             processInfo.UseShellExecute = false;

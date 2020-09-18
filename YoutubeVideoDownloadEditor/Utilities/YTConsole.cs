@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace YoutubeVideoDownloadEditor.Utilities
 {
@@ -13,12 +14,18 @@ namespace YoutubeVideoDownloadEditor.Utilities
 
         public static void WriteLine(string text)
         {
-            MessageReceived?.Invoke(text + '\n');
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageReceived?.Invoke(text + '\n');
+            });
         }
 
         public static void Write(string text)
         {
-            MessageReceived?.Invoke(text);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageReceived?.Invoke(text);
+            });
         }
     }
 }

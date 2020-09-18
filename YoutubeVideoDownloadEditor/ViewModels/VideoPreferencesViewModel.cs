@@ -42,7 +42,12 @@ namespace YoutubeVideoDownloadEditor.ViewModels
             set => RaisePropertyChanged(ref _fileDownloaded, value);
         }
 
-
+        private int _bitRate;
+        public int Bitrate
+        {
+            get => _bitRate;
+            set => RaisePropertyChanged(ref _bitRate, value);
+        }
 
         public string DownloadedFilePath { get; set; }
 
@@ -77,21 +82,28 @@ namespace YoutubeVideoDownloadEditor.ViewModels
 
             if (File.Exists(URLPath))
             {
-                File.Copy(URLPath, Path.Combine(OUTPUT_DIR, "TEMPFILE" + Path.GetExtension(URLPath)));
-                DownloadedFilePath = URLPath;
-                FileDownloaded = true;
-                LoadVideo?.Invoke(DownloadedFilePath);
+                Task.Run(() =>
+                {
+                    YTConsole.WriteLine($"Copying '{URLPath}' to '{OUTPUT_DIR}'");
+                    File.Copy(URLPath, Path.Combine(OUTPUT_DIR, "TEMPFILE" + Path.GetExtension(URLPath)));
+                    DownloadedFilePath = URLPath;
+                    FileDownloaded = true;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        LoadVideo?.Invoke(DownloadedFilePath);
+                    });
+                });
             }
             else
             {
                 Task.Run(() =>
                 {
-                    YTConsole.WriteLine($"Downloading '{URLPath}'");
+                    YTConsole.WriteLine($"Downloading '{URLPath}' to '{OUTPUT_DIR}'");
 
                     IsDownloadingOrExporting = true;
                     string url = URLPath;
-                    string youtubedlPath = Path.GetFullPath(@"..\..\apps\youtube-dl.exe");
-                    ProcessStartInfo processInfo = new ProcessStartInfo(youtubedlPath, $"{url} --output {OUTPUT_DIR + @"\"}TEMPFILE.mp4");
+                    string youtubedlPath = Path.GetFullPath(@"youtube-dl.exe");
+                    ProcessStartInfo processInfo = new ProcessStartInfo(youtubedlPath, $"\"{url}\" --output \"{OUTPUT_DIR + @"\"}TEMPFILE.mp4\"");
                     processInfo.CreateNoWindow = true;
                     processInfo.UseShellExecute = false;
                     processInfo.RedirectStandardError = true;

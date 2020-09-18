@@ -17,7 +17,9 @@
     </Window.Resources>
     <DockPanel Margin="5">
         <Expander IsExpanded="False" Header="Console" ExpandDirection="Up" DockPanel.Dock="Bottom">
-            <TextBox TextChanged="console_TextChanged" Height="150" Margin="-1 4 -1 2" ScrollViewer.VerticalScrollBarVisibility="Visible"
+            <TextBox TextChanged="console_TextChanged" Height="150" Margin="-1 4 -1 2" 
+                     ScrollViewer.VerticalScrollBarVisibility="Visible"
+                     ScrollViewer.HorizontalScrollBarVisibility="Visible"
                      Text="{Binding ConsoleText, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
         </Expander>
         <Grid>
@@ -29,7 +31,9 @@
                     <Label Content="Output Path" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,29,0,0"/>
                     <TextBox Text="{Binding VideoPreferences.OutputPath, UpdateSourceTrigger=PropertyChanged}" ToolTip="For exporting audio files, just make the extension .mp3 or something" Margin="93,29,29,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextWrapping="NoWrap"/>
                     <Button Command="{Binding VideoPreferences.BrowseOutputFileCommand, Mode=OneTime}" Content="..." Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="26" Margin="0,29,0,0"/>
-                    <Grid IsEnabled="{Binding VideoPreferences.FileDownloaded, UpdateSourceTrigger=PropertyChanged}" Margin="0,58,0,0">
+                    <Label Content="Bitrate (B)" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,58,0,0"/>
+                    <TextBox Text="{Binding VideoPreferences.Bitrate, UpdateSourceTrigger=PropertyChanged}" ToolTip="The bit rate (in bits, not kb/mb/etc). 1000000 = 1MB bitrate. Set to 0 to use the automatic bitrate by ffmpeg" Margin="62,58,0,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="NoWrap" Width="100"/>
+                    <Grid IsEnabled="{Binding VideoPreferences.FileDownloaded, UpdateSourceTrigger=PropertyChanged}" Margin="165,58,0,0">
                         <ProgressBar IsIndeterminate="{Binding VideoPreferences.IsDownloadingOrExporting, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,63,0"/>
                         <Button Command="{Binding ExportVideoCommand, Mode=OneTime}" Content="Export" HorizontalAlignment="Right" Width="60"/>
                     </Grid>
@@ -64,7 +68,7 @@
                                              UpperValue="{Binding RangeUpper, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                              Minimum="{Binding RangeSliderMinimum, UpdateSourceTrigger=PropertyChanged}"
                                              Maximum="{Binding RangeSliderMaximum, UpdateSourceTrigger=PropertyChanged}" 
-                                             Margin="0,25,0,65"/>
+                                             Margin="0,25,0,65" ToolTip="Range slider. Used to select the start/end time for trimming the video duration."/>
                         <Grid Height="23" VerticalAlignment="Bottom" Margin="0,0,0,40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
