@@ -91,7 +91,7 @@ namespace YoutubeVideoDownloadEditor.ViewModels
                     IsDownloadingOrExporting = true;
                     string url = URLPath;
                     string youtubedlPath = Path.GetFullPath(@"..\..\apps\youtube-dl.exe");
-                    ProcessStartInfo processInfo = new ProcessStartInfo(youtubedlPath, $"{url} --output {OUTPUT_DIR + @"\"}TEMPFILE");
+                    ProcessStartInfo processInfo = new ProcessStartInfo(youtubedlPath, $"{url} --output {OUTPUT_DIR + @"\"}TEMPFILE.mp4");
                     processInfo.CreateNoWindow = true;
                     processInfo.UseShellExecute = false;
                     processInfo.RedirectStandardError = true;
@@ -133,7 +133,7 @@ namespace YoutubeVideoDownloadEditor.ViewModels
                 VistaSaveFileDialog sfd = new VistaSaveFileDialog();
                 sfd.Title = "Select a location to save the exported file";
                 sfd.Filter = "All files (*.*)|*.*";
-                sfd.FileName = Path.GetFileName(DownloadedFilePath);
+                sfd.FileName = "filename.mp4";
 
                 if (sfd.ShowDialog() == true)
                 {

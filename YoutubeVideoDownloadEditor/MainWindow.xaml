@@ -26,12 +26,12 @@
                     <Label Content="Download URL" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                     <TextBox Text="{Binding VideoPreferences.URLPath, UpdateSourceTrigger=PropertyChanged}" ToolTip="This can also be a file path. Click download on a file path and it will do stuff." Margin="93,0,67,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextWrapping="NoWrap"/>
                     <Button Command="{Binding VideoPreferences.DownloadVideoCommand, Mode=OneTime}" Content="Download" Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="64"/>
-                    <Grid IsEnabled="{Binding VideoPreferences.FileDownloaded, UpdateSourceTrigger=PropertyChanged}" Margin="0,29,0,0">
-                        <Label Content="Output Path" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                        <TextBox Text="{Binding VideoPreferences.OutputPath, UpdateSourceTrigger=PropertyChanged}" ToolTip="For exporting audio files, just make the extension .mp3 or something" Margin="93,0,29,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextWrapping="NoWrap"/>
-                        <Button Command="{Binding VideoPreferences.BrowseOutputFileCommand, Mode=OneTime}" Content="..." Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="26"/>
-                        <ProgressBar IsIndeterminate="{Binding VideoPreferences.IsDownloadingOrExporting, UpdateSourceTrigger=PropertyChanged}" Margin="0,29,63,0"/>
-                        <Button Command="{Binding ExportVideoCommand, Mode=OneTime}" Content="Export" HorizontalAlignment="Right" Width="60" Margin="0,29,0,0"/>
+                    <Label Content="Output Path" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,29,0,0"/>
+                    <TextBox Text="{Binding VideoPreferences.OutputPath, UpdateSourceTrigger=PropertyChanged}" ToolTip="For exporting audio files, just make the extension .mp3 or something" Margin="93,29,29,0" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextWrapping="NoWrap"/>
+                    <Button Command="{Binding VideoPreferences.BrowseOutputFileCommand, Mode=OneTime}" Content="..." Height="26" VerticalAlignment="Top" HorizontalAlignment="Right" Width="26" Margin="0,29,0,0"/>
+                    <Grid IsEnabled="{Binding VideoPreferences.FileDownloaded, UpdateSourceTrigger=PropertyChanged}" Margin="0,58,0,0">
+                        <ProgressBar IsIndeterminate="{Binding VideoPreferences.IsDownloadingOrExporting, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,63,0"/>
+                        <Button Command="{Binding ExportVideoCommand, Mode=OneTime}" Content="Export" HorizontalAlignment="Right" Width="60"/>
                     </Grid>
                 </Grid>
             </GroupBox>
